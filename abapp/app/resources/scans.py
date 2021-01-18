@@ -11,9 +11,8 @@ from flask_restful import Resource, reqparse
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
-from app.libs.get_host_port_arguments import get_host_port_arguments
-from app.libs.check_host_and_port import check_host_and_port
-from app.libs.nmapScan_threading import nmapScan_threading
+
+from app.libs.gen_id import generate_short_id
 from app.libs.extract_file import extract_recursion
 from app.models.scanModel import ScanModel
 from app.models.reportModel import ReportModel
@@ -60,19 +59,39 @@ class Scans(Resource):
         timemode_choices = ('-T0', '-T1', '-T2', '-T3', '-T4', '-T5')
 
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('host', type=str, location='json', required=True, help='No host provided')
-        self.reqparse.add_argument('port', type=str, location='json')
-        self.reqparse.add_argument('mode', type=str, location='json', choices=mode_choices)
-        self.reqparse.add_argument('tcp', type=str, location='json', choices=tcp_choices)
-        self.reqparse.add_argument('nontcp', type=str, location='json', choices=nontcp_choices)
-        self.reqparse.add_argument('timemode', type=str, location='json', choices=timemode_choices)
-        self.reqparse.add_argument('scan', type=str, location='json')
-        self.reqparse.add_argument('ping', type=str, location='json')
-        self.reqparse.add_argument('script', type=str, location='json')
-        self.reqparse.add_argument('target', type=str, location='json')
-        self.reqparse.add_argument('source', type=str, location='json')
-        self.reqparse.add_argument('other', type=str, location='json')
-        self.reqparse.add_argument('timing', type=str, location='json')
+        self.reqparse.add_argument('requests', type=int, location='json')
+        self.reqparse.add_argument('concurrency', type=int, location='json')
+        self.reqparse.add_argument('timelimit', type=int, location='json')
+        self.reqparse.add_argument('timeout', type=int, location='json')
+        self.reqparse.add_argument('windowsize', type=int, location='json')
+        self.reqparse.add_argument('bindaddress', type=str, location='json')
+        self.reqparse.add_argument('postfile', type=str, location='json')
+        self.reqparse.add_argument('putfile', type=str, location='json')
+        self.reqparse.add_argument('contenttype', type=str, location='json')
+        self.reqparse.add_argument('verbosity', type=int, location='json')
+        self.reqparse.add_argument('html', type=bool, location='json')
+        self.reqparse.add_argument('head', type=bool, location='json')
+        self.reqparse.add_argument('tableattributes', type=str, location='json')
+        self.reqparse.add_argument('trattributes', type=str, location='json')
+        self.reqparse.add_argument('tdthattributes', type=str, location='json')
+        self.reqparse.add_argument('cookie', type=str, location='json')
+        self.reqparse.add_argument('header', type=str, location='json')
+        self.reqparse.add_argument('wwwauth', type=str, location='json')
+        self.reqparse.add_argument('proxyauth', type=str, location='json')
+        self.reqparse.add_argument('proxy', type=str, location='json')
+        self.reqparse.add_argument('keepalive', type=bool, location='json')
+        self.reqparse.add_argument('nopercentiles', type=bool, location='json')
+        self.reqparse.add_argument('noconfidence', type=bool, location='json')
+        self.reqparse.add_argument('noprogress', type=bool, location='json')
+        self.reqparse.add_argument('varlength', type=bool, location='json')
+        self.reqparse.add_argument('gnuplotfile', type=bool, location='json')
+        self.reqparse.add_argument('csvfile', type=bool, location='json')
+        self.reqparse.add_argument('noexitsocketerror', type=bool, location='json')
+        self.reqparse.add_argument('method', type=str, location='json')
+        self.reqparse.add_argument('tlsname', type=bool, location='json')
+        self.reqparse.add_argument('ciphersuite', type=str, location='json')
+        self.reqparse.add_argument('protocol', type=str, location='json')
+        self.reqparse.add_argument('certfile', type=str, location='json')
 
         super(Scans, self).__init__()
 
@@ -81,30 +100,27 @@ class Scans(Resource):
         file: specs/scans_post.yml
         """
         args = self.reqparse.parse_args()
-        args2 = dict(args)
 
-        # check host and port
-        code, message = check_host_and_port(args)
+        print('=======================================')
+        print(args)
+        print('=======================================')
 
-        if (code == 200):
-            # host and port are right
-            host, port, arguments = get_host_port_arguments(args2)
+        # id = generate_short_id()
+        # arg_list = get_arg_list(args)
+        # create_time = datetime.now()
+        #
+        # scan = ScanModel(host=host, port=port, arguments=arguments, status='scanning', create_time=create_time,
+        #                  finish_time=create_time)
+        #
+        # scan.add_to_db()
+        # scan_id = scan.id
+        #
+        # # start a new threading to scan
+        # app_threading = current_app._get_current_object()
+        # t = threading.Thread(target=nmapScan_threading, args=(app_threading, host, port, arguments, scan_id))
+        # t.start()
 
-            create_time = datetime.now()
-            scan = ScanModel(host=host, port=port, arguments=arguments, status='scanning', create_time=create_time,
-                             finish_time=create_time)
 
-            scan.add_to_db()
-            scan_id = scan.id
-
-            # start a new threading to scan
-            app_threading = current_app._get_current_object()
-            t = threading.Thread(target=nmapScan_threading, args=(app_threading, host, port, arguments, scan_id))
-            t.start()
-
-            return {'scan_id': scan_id}, 200
-        else:
-            return {'message': message}, code
 
 
 class ScanId(Resource):
