@@ -49,6 +49,17 @@ resource_fields_scanning = {
 }
 
 
+def prepare_args_for_parser(parser):
+    """ Modifies all the args of a Parser to better defaults. """
+    if not isinstance(parser, reqparse.RequestParser):
+        raise ValueError('Expecting a parser')
+    for arg in parser.args:
+        arg.store_missing = False
+        arg.help = "Error: {error_msg}. Field description: %s" % arg.help
+    return parser
+
+
+
 class Scans(Resource):
     def __init__(self):
         mode_choices = (
@@ -59,6 +70,7 @@ class Scans(Resource):
         timemode_choices = ('-T0', '-T1', '-T2', '-T3', '-T4', '-T5')
 
         self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('target', type=str, location='json')
         self.reqparse.add_argument('requests', type=int, location='json')
         self.reqparse.add_argument('concurrency', type=int, location='json')
         self.reqparse.add_argument('timelimit', type=int, location='json')
@@ -92,6 +104,7 @@ class Scans(Resource):
         self.reqparse.add_argument('ciphersuite', type=str, location='json')
         self.reqparse.add_argument('protocol', type=str, location='json')
         self.reqparse.add_argument('certfile', type=str, location='json')
+        self.reqparse = prepare_args_for_parser(self.reqparse)
 
         super(Scans, self).__init__()
 

@@ -33,7 +33,7 @@ api = Api(app, catch_all_404s=True)
 swagger = Swagger(app)
 
 # add resources
-api.add_resource(Scans, '/v1.0/scans')
+api.add_resource(Scans, '/v1.0/tasks')
 
 
 
