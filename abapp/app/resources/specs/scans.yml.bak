@@ -1,0 +1,40 @@
+Start a new scan
+---
+tags:
+  - scan
+summary: Start a new scan
+description: 'post a json, start a new scan'
+responses:
+  200:
+    description: scan starts
+    schema:
+      id: scan_id
+      properties:
+        scan_id:
+        type: string
+        description: The scan id for the task
+    example: { "scan_id": 16 }
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      id: create_scan
+      required:
+        - host
+      properties:
+        host:
+          type: string
+          description: The host to scan
+        port:
+          type: string
+          description: 密码.
+        inn_name:
+          type: string
+          description: 客栈名称.
+        phone:
+          type: string
+          description: 手机号.
+        wx:
+          type: string
+          description: 微信.

@@ -1,0 +1,86 @@
+Get a scan status
+---
+tags:
+  - scan
+produces:
+  - application/json
+parameters:
+  - name: id
+    in: path
+    description: scan id
+    required: true
+responses:
+  200:
+      description: return scan information, scan id is found
+      schema:
+        properties:
+          resource:
+            schema:
+              id: get_scan_ok_resource
+              properties:
+                id:
+                  type: integer
+                  description: the scan id
+                  example: 1
+                host:
+                  type: string
+                  description: host of the scan
+                  example: '192.168.45.149'
+                port:
+                  type: string
+                  description: port of the scan
+                  example: '103,104,105,445'
+                arguments:
+                  type: string
+                  description: arguments of the scan
+                  example: '-sV'
+                status:
+                  type: string
+                  description: status of the scan, true is over, false is scanning
+                  enum: [ 'scanning', 'scanned', 'failed']
+                create_time:
+                  type: string
+                  format: date-time
+                  description: create_time of the scan
+                  example: 'Mon, 07 Dec 2020 09:43:14 -0000'
+                finish_time:
+                  type: string
+                  format: date-time
+                  description: finish_time of the scan,for the scanning tasks their finish_time is equal to create_time
+                  example: 'Mon, 07 Dec 2020 09:43:14 -0000'
+  400:
+      description: scan id is not found
+      schema:
+        properties:
+          resource:
+            schema:
+              id: get_scan_not_found_resource
+              properties:
+                id:
+                  type: integer
+                  description: the scan id, for the not found scan id, it is 0
+                  example: 0
+                host:
+                  type: string
+                  description: host of the scan, for the not found scan id, it is null
+                  example: 'null'
+                port:
+                  type: string
+                  description: port of the scan, for the not found scan id, it is null
+                  example: 'null'
+                arguments:
+                  type: string
+                  description: arguments of the scan, for the not found scan id, it is null
+                  example: 'null'
+                status:
+                  type: string
+                  description: status of the scan, for the not found scan id, it is null
+                  example: 'null'
+                create_time:
+                  type: string
+                  description: create_time of the scan, for the not found scan id, it is null
+                  example: 'null'
+                finish_time:
+                  type: string
+                  description: finish_time of the scan, for the not found scan id, it is null
+                  example: 'null'

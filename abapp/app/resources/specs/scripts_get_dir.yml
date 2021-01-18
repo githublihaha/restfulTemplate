@@ -1,0 +1,29 @@
+Get scripts from the directory
+---
+tags:
+  - script
+produces:
+  - application/json
+responses:
+  200:
+    schema:
+      id: get_scripts_dir_ok
+      type: object
+      properties:
+        result:
+          type: array
+          description: array of file name of the directory
+          items:
+            type: string
+            description: file name of the directory
+            example: 'http-vuln-cve2014-2129.nse'
+
+  400:
+    description: get scripts from directory error
+    schema:
+      id: get_scripts_dir_error
+      properties:
+        message:
+          type: string
+          description: error message
+          example: 'File not found.'

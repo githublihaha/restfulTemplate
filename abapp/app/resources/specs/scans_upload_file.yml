@@ -1,0 +1,33 @@
+Post scan files, Supported file format, tar, gz, bz2, xz, zip, rar, 7z
+---
+tags:
+  - scan
+consumes:
+  - multipart/form-data
+produces:
+  - application/json
+parameters:
+  - name: uploadfile
+    in: formData
+    type: file
+responses:
+  200:
+    schema:
+      id: post_scan_file_ok
+      properties:
+        message:
+          type: string
+          description: ok message
+          example: ''
+        filename:
+          type: string
+          description: The file name of the successful upload
+
+  400:
+    schema:
+      id: post_scan_file_error
+      properties:
+        message:
+          type: string
+          description: error message
+          example: 'Extract Error: img is not supported.'
