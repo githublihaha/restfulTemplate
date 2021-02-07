@@ -1,6 +1,5 @@
 import os
-import threading
-from datetime import datetime
+
 
 import werkzeug
 from flask import current_app
@@ -11,13 +10,12 @@ from flask_restful import Resource, reqparse
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
-
 from app.libs.gen_id import generate_short_id
 from app.libs.extract_file import extract_recursion
 from app.models.scanModel import ScanModel
 from app.models.reportModel import ReportModel
 
-# UPLOAD_FOLDER = '/usr/share/nmap/uploadfiles'
+
 UPLOAD_FOLDER = '/tmp'
 
 
@@ -59,79 +57,25 @@ def prepare_args_for_parser(parser):
     return parser
 
 
-
 class Scans(Resource):
     def __init__(self):
-        mode_choices = (
-        'intense', 'intense_udp', 'intense_all_tcp', 'intense_no_ping', 'ping', 'quick', 'quick_plus', 'quick_trace',
-        'regular', 'slow_comp')
-        tcp_choices = ('ACK', 'FIN', 'Maimon', 'Null', 'SYN', 'Connect', 'Window', 'Xmas')
-        nontcp_choices = ('UDP', 'IP', 'List', 'Ping', 'SCTP INIT', 'SCTP COOKIE-ECHO')
-        timemode_choices = ('-T0', '-T1', '-T2', '-T3', '-T4', '-T5')
+        timemode_choices = ('T0', 'T1', 'T2')
 
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('target', type=str, location='json')
-        self.reqparse.add_argument('requests', type=int, location='json')
-        self.reqparse.add_argument('concurrency', type=int, location='json')
-        self.reqparse.add_argument('timelimit', type=int, location='json')
-        self.reqparse.add_argument('timeout', type=int, location='json')
-        self.reqparse.add_argument('windowsize', type=int, location='json')
-        self.reqparse.add_argument('bindaddress', type=str, location='json')
-        self.reqparse.add_argument('postfile', type=str, location='json')
-        self.reqparse.add_argument('putfile', type=str, location='json')
-        self.reqparse.add_argument('contenttype', type=str, location='json')
-        self.reqparse.add_argument('verbosity', type=int, location='json')
-        self.reqparse.add_argument('html', type=bool, location='json')
-        self.reqparse.add_argument('head', type=bool, location='json')
-        self.reqparse.add_argument('tableattributes', type=str, location='json')
-        self.reqparse.add_argument('trattributes', type=str, location='json')
-        self.reqparse.add_argument('tdthattributes', type=str, location='json')
-        self.reqparse.add_argument('cookie', type=str, location='json')
-        self.reqparse.add_argument('header', type=str, location='json')
-        self.reqparse.add_argument('wwwauth', type=str, location='json')
-        self.reqparse.add_argument('proxyauth', type=str, location='json')
-        self.reqparse.add_argument('proxy', type=str, location='json')
-        self.reqparse.add_argument('keepalive', type=bool, location='json')
-        self.reqparse.add_argument('nopercentiles', type=bool, location='json')
-        self.reqparse.add_argument('noconfidence', type=bool, location='json')
-        self.reqparse.add_argument('noprogress', type=bool, location='json')
-        self.reqparse.add_argument('varlength', type=bool, location='json')
-        self.reqparse.add_argument('gnuplotfile', type=bool, location='json')
-        self.reqparse.add_argument('csvfile', type=bool, location='json')
-        self.reqparse.add_argument('noexitsocketerror', type=bool, location='json')
-        self.reqparse.add_argument('method', type=str, location='json')
-        self.reqparse.add_argument('tlsname', type=bool, location='json')
-        self.reqparse.add_argument('ciphersuite', type=str, location='json')
-        self.reqparse.add_argument('protocol', type=str, location='json')
-        self.reqparse.add_argument('certfile', type=str, location='json')
+        self.reqparse.add_argument('name', type=str, location='json')
+        self.reqparse.add_argument('port', type=str, location='json')
+        self.reqparse.add_argument('timemode', type=str, location='json', choices=timemode_choices)
         self.reqparse = prepare_args_for_parser(self.reqparse)
-
         super(Scans, self).__init__()
-
+    #
     def post(self):
-        """
-        file: specs/scans_post.yml
-        """
         args = self.reqparse.parse_args()
-
-        print('=======================================')
         print(args)
-        print('=======================================')
+        return args
 
-        # id = generate_short_id()
-        # arg_list = get_arg_list(args)
-        # create_time = datetime.now()
-        #
-        # scan = ScanModel(host=host, port=port, arguments=arguments, status='scanning', create_time=create_time,
-        #                  finish_time=create_time)
-        #
-        # scan.add_to_db()
-        # scan_id = scan.id
-        #
-        # # start a new threading to scan
-        # app_threading = current_app._get_current_object()
-        # t = threading.Thread(target=nmapScan_threading, args=(app_threading, host, port, arguments, scan_id))
-        # t.start()
+    def get(self):
+        pass
+
 
 
 
